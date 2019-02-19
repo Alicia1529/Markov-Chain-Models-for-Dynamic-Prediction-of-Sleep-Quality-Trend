@@ -1,0 +1,97 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Document</title>  
+</head>  
+<script src="jquery.js" ></script>
+<script src="FileSaver.js" charset="utf-8"></script>
+<body>  
+    <canvas id="canvas" width="2000" height="1000"></canvas>  
+<div>
+    <div>
+    <input type="file" id="files" style="display:none" onchange="fileimport();"/>
+    <input type="button" id="export" value="导出"/>
+    </div>
+</div>
+
+    <script> 
+content = '' 
+
+let k = 0;
+let time = setInterval(() => {
+        window.onload=function(){ 
+            function $$(id){  
+                return document.getElementById(id);  
+            };           
+            cnv=$$("canvas");  
+            ct=cnv.getContext("2d");  
+            asleep = prompt("Please enter your sleep duration", String(k));
+            image=new Image();  
+            image.src="../Server/Data/unnamed-"+String(k)+'.png';  
+            image.onload=function(){  
+                 asleep = asleep.split(':')
+                 console.log(asleep)
+                 h = asleep[0]
+                 m = asleep[1]
+                 time = Number(h)*60+Number(m)
+                 console.log('time',time)
+                 content = content+String(k)+' '
+                 content = content+String(time)
+                 set = []
+                 for (i=0;i<595;i++){
+                     set[i] = []
+                 };
+
+            
+                ct.drawImage(image,10,10);  
+                imgData=ct.getImageData(99,110,595,340);  
+                data=imgData.data;  
+                for(var i=0;i<data.length;i+=4){ 
+                    if (2<=data[i]&&data[i]<70&&140<data[i+1]&&data[i+1]<=250&&230<=data[i+2]&&data[i+2]<=255) {
+                        idx = i/4%595;
+                        set[idx].push(i/4/595);            
+                    }
+                    else{data[i+3]=0;};
+                
+                };
+                //average value. sleep quality
+                for (i=0;i<595;i++){
+                    if (set[i].length!=0) set[i] = (
+                    set[i].reduce((a,b)=>(a+b))/set[i].length).toFixed()//average value
+                    set[i] = (set[i]/340).toFixed(2);
+                };
+                $(document).ready(function(){
+                      for (j=0;j<set.length;j++){
+                          content = content+' '+set[j];
+                      }
+                      content = content+'\n'                   
+                })
+            }  
+        };  
+        k+=1
+  if (k == 3) {
+    clearInterval(time);
+    console.log("stop.");
+  }
+}, 5000);
+
+
+
+
+
+
+$(document).ready(function(){
+//alert("start");
+
+$("#export").click(function(){
+    var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "file.txt");//saveAs(blob,filename) //仅限于chorme的下载目录里
+//alert("export OK")
+});
+})
+
+
+    </script>  
+</body>  
+</html>  

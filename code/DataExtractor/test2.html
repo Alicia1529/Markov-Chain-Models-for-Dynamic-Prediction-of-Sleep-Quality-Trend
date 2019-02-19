@@ -1,0 +1,36 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Document</title>  
+</head>  
+<body>  
+    <canvas id="canvas" width="2000" height="1200"></canvas>  
+    <script>  
+        function $$(id){  
+            return document.getElementById(id);  
+        }  
+        console.log('loading')
+        window.onload=function(){  
+            var cnv=$$("canvas");  
+            var ct=cnv.getContext("2d");  
+            var image=new Image();  
+            image.src="../Server/unnamed.png";  
+            image.onload=function(){  
+                ct.drawImage(image,10,10);  
+                var imgData=ct.getImageData(10,10,800,1200);  
+                var data=imgData.data;  
+                //遍历每个像素,红，蓝，绿，三个通道各自取反转值 (255-自身)  
+                for(var i=0;i<data.length;i+=4){  
+                    data[i+0]=255-data[i+0];  
+                    data[i+1]=255 -data[i+1];  
+                    data[i+2]=255-data[i+2];  
+                }  
+                //在指定位置输出图片  
+                ct.putImageData(imgData,1000,10);  
+                console.log('success')
+            }  
+        }  
+    </script>  
+</body>  
+</html>  

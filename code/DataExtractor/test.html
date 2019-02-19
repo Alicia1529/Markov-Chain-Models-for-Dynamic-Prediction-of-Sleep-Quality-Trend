@@ -1,0 +1,59 @@
+<!doctype html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport"  
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">  
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">  
+    <title>Document</title>  
+    <style>  
+        html,body{  
+            height: 100%;  
+            margin: 333px;  
+        }  
+    </style>  
+</head>  
+<body>  
+    <canvas id="aa"width="1000"height="1000"></canvas>  
+    <script>  
+        var canvas = document.getElementById('aa');  
+        var context = canvas.getContext('2d');  
+  
+        var img = new  Image();  
+        img.src = "http://127.0.0.1:1529/unnamed.png";  
+        img.onload = function ()  
+        {  
+            context.drawImage(img, 0,0,530,530);  
+//            context.drawImage(img, 0,0,530,530); //如果canvas宽高不足，可以后加参数让图片正常大小来显示  
+            img = context.getImageData(0,0,530,530);  //获取位图的像素信息  
+  
+            var pixcount = 530 * 530;  
+            for(var i = 0; i < pixcount * 4; i += 4)  
+            {  
+                var myRed = img.data[i];  
+                var myGreen = img.data[i+1];  
+                var myBlue = img.data[i+2];  
+                var myAlpha = img.data[i+3];  
+            }       //遍历所有的位图的像素点的所有像素值  
+  
+            for( var i = 0; i < pixcount * 4; i += 4)  
+            {  
+                var myGray = parseInt((myRed + myGreen + myBlue)/3);  
+                img.data[i] = myGray;  
+                img.data[i+1] = myGray;  
+                img.data[i+2] = myGray;  
+            }    //来计算画灰色  
+  
+            for(var i = 0; i < pixcount * 4; i += 4)  
+            {  
+                img.data[i+3] = 128;  
+            }  
+  
+            context.putImageData(img, 0,0);  
+  
+        }  
+        //            搞事搞事  
+  
+    </script>  
+</body>  
+</html>  
